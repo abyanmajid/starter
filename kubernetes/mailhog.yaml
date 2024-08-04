@@ -1,0 +1,45 @@
+# mailhog.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mailhog
+  labels:
+    app: mailhog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mailhog
+  template:
+    metadata:
+      labels:
+        app: mailhog
+    spec:
+      containers:
+        - name: mailhog
+          image: mailhog/mailhog
+          ports:
+            - containerPort: 1025
+            - containerPort: 8025
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mailhog
+spec:
+  selector:
+    app: mailhog
+  ports:
+    - protocol: TCP
+      port: 1025
+      targetPort: 1025
+      name: smtp
+    - protocol: TCP
+      port: 8025
+      targetPort: 8025
+      name: web
+  type: NodePort  # Expose to the host machine, consider changing to LoadBalancer in cloud environments
+
